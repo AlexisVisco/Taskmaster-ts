@@ -1,19 +1,15 @@
 #!/usr/bin/env node
 
-import parseArgs from "./util/argv-parse"
-import {ConfigProcess, defaultConfigProcess} from "./types/ConfigProcess";
+import {defaultConfigProcess} from "./types/ConfigProcess";
 import * as fs from "fs";
+import {Test} from "./commands/list/Test";
+import {callCommand} from "./commands/Commands";
 
-type Options = { port?: number, config: string, generate?: string, help?: string}
+type Options = { port?: number, config: string, generate?: string, help?: string }
 
-const options: Options= parseArgs(process.argv, {
-    default: {
-        port: 9898,
-        config: "./config.json"
-    },
-    alias: {
-        "port": ["p"], "config": ["cfg"]
-    }
+const options: Options = require('minimist')(process.argv, {
+    default: { port: 9898, config: "./config.json" },
+    alias: { "port": ["p"], "config": ["cfg"] }
 });
 
 class Application {
@@ -44,3 +40,5 @@ class Application {
 }
 
 new Application(options).main();
+Test;
+callCommand("hello 178923");
