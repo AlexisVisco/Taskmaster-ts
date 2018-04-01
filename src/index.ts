@@ -4,6 +4,7 @@ import {defaultConfigProcess} from "./types/ConfigProcess";
 import * as fs from "fs";
 import {Test} from "./commands/list/Test";
 import {callCommand} from "./commands/Commands";
+import {Color} from "./util/Color";
 
 type Options = { port?: number, config: string, generate?: string, help?: string }
 
@@ -41,4 +42,7 @@ class Application {
 
 new Application(options).main();
 Test;
-callCommand("hello 178923");
+callCommand("hello -");
+const colored = Color.BLUE_BACKGROUND + " HEYYYYYy !" + Color.RESET;
+
+console.log(Color.colorify("hey im a 123 456 79 years and 789"));
