@@ -13,22 +13,22 @@ export type CommandInfo = {
 export function callCommand(command: string) {
     const pureCommand = commands.find(e => e.isCommand(command));
     if (pureCommand) {
-        let backReference: Command = undefined;
+        let ref: Command = undefined;
         const list = commandsInfo.get(pureCommand.className)
             .sort((a, b) => b.priority - a.priority);
         for (let commandInfo of list) {
             const result = commandInfo.regex.exec(command.split(' ').slice(1).join(' '));
-            if (!backReference) {
-                backReference = commandInfo.target;
-                backReference.commandName = capitalize(pureCommand.label);
+            if (!ref) {
+                ref = commandInfo.target;
+                ref.commandName = capitalize(pureCommand.label);
             }
             if (result) {
                 commandInfo.value.apply(commandInfo.target, result.slice(1));
                 return;
             }
         }
-        if (backReference)
-            backReference.help();
+        if (ref)
+            ref.help();
     }
 }
 
