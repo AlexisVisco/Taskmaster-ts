@@ -1,4 +1,4 @@
-interface ConfigProcess {
+export interface ConfigProcess {
     name: string
     cmd: string
     numProcess: number
@@ -16,7 +16,7 @@ interface ConfigProcess {
     environment?: any
 }
 
-function defaultConfigProcess() : ConfigProcess[] {
+export function defaultConfigProcess() : ConfigProcess[] {
     return [{
         name: "My awesome program",
         cmd: "awesome-program -f .",
@@ -35,4 +35,3 @@ function defaultConfigProcess() : ConfigProcess[] {
         environment: {'env': 'optional'},
     }]
 }
-export {ConfigProcess, defaultConfigProcess}
