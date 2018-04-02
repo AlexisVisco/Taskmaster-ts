@@ -1,8 +1,10 @@
 import {Color} from "../util/Color";
+import {Socket} from "net";
 
 export abstract class Command {
 
     commandName: string;
+    socket: Socket;
 
     abstract help();
 

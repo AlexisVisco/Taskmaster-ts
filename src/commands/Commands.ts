@@ -1,5 +1,6 @@
 import {Command} from "./Command";
 import {capitalize} from "../util/Util";
+import {Socket} from "net";
 
 const commands: Array<PureCommand> = [];
 const commandsInfo: Map<string, Array<CommandInfo>> = new Map();
@@ -10,7 +11,7 @@ export type CommandInfo = {
     target: Command, value: any, options: CommandDesc
 }
 
-export function callCommand(command: string) {
+export function callCommand(command: string, socket: Socket) {
     const pureCommand = commands.find(e => e.isCommand(command));
     if (pureCommand) {
         let ref: Command = undefined;
@@ -19,8 +20,9 @@ export function callCommand(command: string) {
         for (let commandInfo of list) {
             const result = commandInfo.regex.exec(command.split(' ').slice(1).join(' '));
             if (!ref) {
-                ref = commandInfo.target;
+                ref = Object.assign({}, commandInfo.target);
                 ref.commandName = capitalize(pureCommand.label);
+                ref.socket = socket;
             }
             if (result) {
                 commandInfo.value.apply(commandInfo.target, result.slice(1));

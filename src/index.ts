@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
-import {defaultConfigProcess} from "./types/ConfigProcess";
+import {defaultConfigProcess} from "./server/types/ConfigProcess";
 import * as fs from "fs";
-import {Test} from "./commands/list/Test";
+import {Test} from "./server/list/Test";
 import {callCommand} from "./commands/Commands";
 import {Color} from "./util/Color";
+import {dateFormat, getUserHome} from "./util/Util";
+import {Level, Logger} from "./util/Logger";
+import {SocketHandler} from "./server/Sockethandler";
 
 type Options = { port?: number, config: string, generate?: string, help?: string }
 
@@ -26,6 +29,8 @@ class Application {
             this.generateConfigAt();
         else if (this.options.help)
             this.showHelp();
+        else
+            this.launchServer();
     }
 
     private generateConfigAt() {
@@ -35,14 +40,13 @@ class Application {
         })
     }
 
+    private launchServer() {
+        new SocketHandler(this.options.port);
+    }
+
     private showHelp() {
         console.log("Help: ...")
     }
 }
 
 new Application(options).main();
-Test;
-callCommand("hello -");
-const colored = Color.BLUE_BACKGROUND + " HEYYYYYy !" + Color.RESET;
-
-console.log(Color.colorify("hey im a 123 456 79 years and 789"));

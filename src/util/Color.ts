@@ -85,6 +85,10 @@ export class Color {
         return Color.hasColor(origin) ? origin : origin.replace(/(\d+)/g, Color.CYAN + "$1" + Color.RESET);
     }
 
+    public static c(color: number) {
+        return "\x1b[" + color + "m";
+    }
+
     public static to(str: string, color) {
         return color + str + Color.RESET;
     }
