@@ -125,7 +125,7 @@ export class ProcessEntity {
     }
 
     public restart() {
-        this.parent.out.log(Level.INFO, `Restarting: process ${this.parent.config.name}.`)
+        this.parent.out.log(Level.INFO, `Restarting: process ${this.parent.config.name}.`);
         if (this.isAlive) this.kill(() => this.run());
         else this.run();
     }

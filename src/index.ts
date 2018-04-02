@@ -8,6 +8,7 @@ import {Color} from "./util/Color";
 import {dateFormat, getUserHome} from "./util/Util";
 import {Level, Logger} from "./util/Logger";
 import {SocketHandler} from "./server/Sockethandler";
+import {TableGenerator} from "./util/TableGenerator";
 
 type Options = { port?: number, config: string, generate?: string, help?: string }
 
@@ -48,5 +49,13 @@ class Application {
         console.log("Help: ...")
     }
 }
+
+const header = ["test", "7894562113"];
+const lst = [
+    ["jreierukfeur", "ergbufyre"],
+    ["12", "789"],
+    ["165w4w9e8fewf", "fe2w1few6"],
+];
+console.log(new TableGenerator().generateTable(header, lst));
 
 new Application(options).main();
