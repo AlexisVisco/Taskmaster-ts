@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {defaultConfigProcess} from "./server/types/ConfigProcess";
+import {defaultConfigProcess} from "./server/types/ProcessConfig";
 import * as fs from "fs";
 import {Test} from "./server/list/Test";
 import {callCommand} from "./commands/Commands";

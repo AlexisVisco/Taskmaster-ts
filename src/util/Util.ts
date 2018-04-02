@@ -47,3 +47,9 @@ export function dateFormat (date, fstr, utc) {
 export function randId(count) {
     return crypto.randomBytes(count).toString("hex");
 }
+
+export function diffBetweenDates(d1: Date, d2: Date) {
+    const dif = d1.getTime() - d2.getTime();
+    const res = dif / 1000;
+    return Math.abs(res);
+}

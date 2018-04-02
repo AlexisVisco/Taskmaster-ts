@@ -1,22 +1,24 @@
-export interface ConfigProcess {
+import {RestartCondition} from "./RestartCondition";
+
+export interface ProcessConfig {
     name: string
     cmd: string
     numProcess: number
-    stopSignal: String | number
+    stopSignal: string | number
     exitCodes: number[]
     startTimeSuccessful?: number
-    workingDirectory?: String
+    workingDirectory?: string
     stopTimeSuccessful?: number
-    autoRestart?: boolean
+    autoRestart?: RestartCondition
     startRetries?: number
     autoStart?: boolean
-    umask?: String
+    umask?: string
     stderr?: string
     stdout?: string
     environment?: any
 }
 
-export function defaultConfigProcess() : ConfigProcess[] {
+export function defaultConfigProcess() : ProcessConfig[] {
     return [{
         name: "My awesome program",
         cmd: "awesome-program -f .",
@@ -26,7 +28,7 @@ export function defaultConfigProcess() : ConfigProcess[] {
         startTimeSuccessful: 5,
         workingDirectory: "/opt/process_location",
         stopTimeSuccessful: 1,
-        autoRestart: true,
+        autoRestart: RestartCondition.UNEXPECTED,
         startRetries: 5,
         autoStart: true,
         umask: "022",
