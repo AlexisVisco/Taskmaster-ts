@@ -119,45 +119,8 @@ export class ProcessEntity {
         return false;
     }
 
-    private updateStatus() {
-        const startedSuccessfully = diffBetweenDates(this.timeAtLaunch, new Date()) >= this.parent.config.startTimeSuccessful;
-        if (startedSuccessfully && this._status == ProcessStatus.LAUNCHING)
-            this._status = ProcessStatus.LAUNCHED;
-    }
-
-    get isAlive() : boolean {
-        return this._status != ProcessStatus.TERMINATED;
-    }
-
-    get parentName() : string { return this.parent.config.name }
-
-    get currentName() : string { return `${this.parentName}_${this.id}` }
-
-    get amountRestartBecauseFail() : number {
-        return this.startRetries;
-    }
-
-    get pid() : number {
-        return process.pid;
-    }
-
-    get duration() : number {
-        if (this.status == ProcessStatus.TERMINATED)
-            return 0;
-        return diffBetweenDates(this.timeAtLaunch, new Date());
-    }
-
-    get config() : ProcessConfig {
-        return this.parent.config;
-    }
-
-    get status() : ProcessStatus {
-        this.updateStatus();
-        return this._status;
-    }
-
     public stop() {
-        this.parent.out.log(Level.INFO, `Terminating: process ${this.parent.config.name}.`)
+        this.parent.out.log(Level.INFO, `Terminating: process ${this.parent.config.name}.`);
         this.kill(undefined);
     }
 
@@ -167,6 +130,33 @@ export class ProcessEntity {
         else this.run();
     }
 
+    private updateStatus() {
+        const startedSuccessfully = diffBetweenDates(this.timeAtLaunch, new Date()) >= this.parent.config.startTimeSuccessful;
+        if (startedSuccessfully && this._status == ProcessStatus.LAUNCHING)
+            this._status = ProcessStatus.LAUNCHED;
+    }
 
+    get duration() : number {
+        if (this.status == ProcessStatus.TERMINATED)
+            return 0;
+        return diffBetweenDates(this.timeAtLaunch, new Date());
+    }
+
+    get status() : ProcessStatus {
+        this.updateStatus();
+        return this._status;
+    }
+
+    get isAlive() : boolean { return this._status != ProcessStatus.TERMINATED; }
+
+    get parentName() : string { return this.parent.config.name }
+
+    get currentName() : string { return `${this.parentName}_${this.id}` }
+
+    get amountRestartBecauseFail() : number { return this.startRetries }
+
+    get pid() : number { return process.pid }
+
+    get config() : ProcessConfig { return this.parent.config }
 
 }
