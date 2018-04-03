@@ -3,6 +3,7 @@
 import {defaultConfigProcess} from "./server/types/ProcessConfig";
 import * as fs from "fs";
 import {SocketHandler} from "./server/Sockethandler";
+import sprintf from "sprintf-js";
 
 type Options = { port?: number, config: string, generate?: string, help?: string }
 
@@ -44,4 +45,5 @@ class Application {
     }
 }
 
+console.log(sprintf.sprintf("%15s", "Hello wol"));
 new Application(options).main();

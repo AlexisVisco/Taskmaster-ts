@@ -7,9 +7,9 @@ export class TableGenerator {
     private TABLE_V_SPLIT_SYMBOL: string = "|";
     private TABLE_H_SPLIT_SYMBOL: string = "-";
 
-    public generateTable(headerList: string[], rowList: Array<Array<string>>, overRiddenHeader: number[] = []) {
+    public generateTable(headerList: string[], rowList: Array<Array<string>>, overRiddenHeader: number = 1) {
         let strBuilder: string = "";
-        const rowheight = overRiddenHeader.length > 0 ? overRiddenHeader[0] : 1;
+        const rowheight = overRiddenHeader;
         const columMaxWidthMapping = this.getMaximumWidthOfTable(headerList, rowList);
 
         strBuilder += '\n';

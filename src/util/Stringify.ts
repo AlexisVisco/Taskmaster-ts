@@ -2,6 +2,7 @@ import {ProgramHandler} from "../server/ProgramHandler";
 import {TableGenerator} from "./TableGenerator";
 import {Color} from "./Color";
 import {ProcessEntity} from "../server/ProcessEntity";
+import {SimpleTable} from "./SimpleTable";
 
 export function stringifyProgramsHandlers() : string {
     const headers = ["Name", "Health", "Amount processes", "Alive processes", "Command", "Launched at"]
@@ -29,4 +30,18 @@ export function stringifyProgramHandler(pro: ProgramHandler) : string {
         ]);
     });
     return new TableGenerator().generateTable(headers, rows);
+}
+
+export function stringifyProcessEntity(pe: ProcessEntity) : String {
+    return new SimpleTable()
+        .putStr("Id", pe.id.toString())
+        .putStr("Name", pe.currentName)
+        .putStr("Parent name", pe.parentName)
+        .putStr("Alive", pe.isAlive ? Color.GREEN_BOLD + "Yes" + Color.RESET : Color.RED_BOLD + "No" + Color.RESET)
+        .putStr("Status", pe.status)
+        .putStr("Pid", pe.isAlive ? pe.pid.toString() : "No pid")
+        .putStr("Uptime", pe.stringDuration)
+        .putStr("Restart", pe.restartTimes + " time(s)")
+        .putStr("Fail restart", pe.amountRestartBecauseFail + " time(s)")
+    .toStr();
 }

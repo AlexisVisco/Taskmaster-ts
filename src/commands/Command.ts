@@ -10,7 +10,7 @@ export abstract class Command {
 
     helpLine(): Command {
         const colored = Color.to(this.commandName, Color.PURPLE);
-        console.log(`Help for command ${colored} >>`);
+        this.socket.write(`Help for command ${colored} >>`);
         return this;
     }
 
@@ -19,7 +19,7 @@ export abstract class Command {
                                                 Color.to("$1", Color.GREEN));
         const describeColored = describe.replace(/(\$\w+)/g,
                                                 Color.to("$1", Color.CYAN));
-        console.log(`  * ${commandColored} - ${describeColored}`);
+        this.socket.write(`  * ${commandColored} - ${describeColored}`);
         return this;
     }
 }
