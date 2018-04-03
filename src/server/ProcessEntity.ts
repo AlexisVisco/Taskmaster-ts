@@ -78,7 +78,7 @@ export class ProcessEntity {
 
     private kill(fn?: any) {
         if (this.isAlive) {
-            this._status = ProcessStatus.TERMINATED;
+            this._status = ProcessStatus.TERMINATING;
             this.needToBeRestarted = false;
             if (fn != undefined)
                 this.process.on('exit', fn());

@@ -2,11 +2,11 @@ import * as path from "path";
 import * as fs from "fs";
 import crypto from "crypto";
 
-export function capitalize(string) {
+export function capitalize(string) : string {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export function getUserHome() {
+export function getUserHome() : string {
     return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 }
 
@@ -27,9 +27,9 @@ export function mkdirp(targetDir, {isRelativeToScript = false} = {}) {
     }, initDir);
 }
 
-export function dateFormat (date, fstr, utc) {
+export function dateFormat (date : Date, formatedString : string, utc) : string {
     utc = utc ? 'getUTC' : 'get';
-    return fstr.replace (/%[YmdHMS]/g, function (m) {
+    return formatedString.replace (/%[YmdHMS]/g, function (m) {
         switch (m) {
             case '%Y': return date[utc + 'FullYear'] ();
             case '%m': m = 1 + date[utc + 'Month'] (); break;
@@ -43,7 +43,7 @@ export function dateFormat (date, fstr, utc) {
     });
 }
 
-export function randId(count) {
+export function randId(count: number) : string {
     return crypto.randomBytes(count).toString("hex");
 }
 
