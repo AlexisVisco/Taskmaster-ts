@@ -5,7 +5,7 @@ import {Level} from "../util/Logger";
 import {exec} from "child_process";
 import * as fs from "fs";
 import {WriteStream} from "fs";
-import {diffBetweenDates} from "../util/Util";
+import {dateFormat, diffBetweenDates} from "../util/Util";
 import {RestartCondition} from "./types/RestartCondition";
 import {ProcessConfig} from "./types/ProcessConfig";
 
@@ -152,6 +152,8 @@ export class ProcessEntity {
     get parentName() : string { return this.parent.config.name }
 
     get currentName() : string { return `${this.parentName}_${this.id}` }
+
+    get stringDuration() : string { return dateFormat(this.timeAtLaunch, "%d/%m %H:%M:%S", false) }
 
     get amountRestartBecauseFail() : number { return this.startRetries }
 

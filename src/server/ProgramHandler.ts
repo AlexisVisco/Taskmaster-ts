@@ -6,7 +6,7 @@ import {dateFormat} from "../util/Util";
 
 export class ProgramHandler {
 
-    private static programs : Array<ProgramHandler> = [];
+    static programs : Array<ProgramHandler> = [];
     public out : Logger;
 
     public config: ProcessConfig;

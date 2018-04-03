@@ -14,7 +14,7 @@ export abstract class Command {
         return this;
     }
 
-    lineCommand(command, describe) : Command {
+    helpCommand(command, describe) : Command {
         const commandColored = command.replace(/(<[a-zA-Z0-9 ]*>)/g,
                                                 Color.to("$1", Color.GREEN));
         const describeColored = describe.replace(/(\$\w+)/g,
