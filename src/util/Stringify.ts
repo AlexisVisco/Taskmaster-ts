@@ -6,7 +6,7 @@ import {SimpleTable} from "./SimpleTable";
 
 export function stringifyProgramsHandlers() : string {
     const headers = ["Name", "Health", "Amount processes", "Alive processes", "Command", "Launched at"]
-                    .map(e => `${Color.WHITE_BOLD}${e}${Color.RESET}`);
+                    .map(e => `${e.toUpperCase()}`);
     const rows : Array<Array<string>> = [];
     ProgramHandler.programs.forEach(e => {
         rows.push([e.config.name, e.stringState, e.config.numProcess.toString(),

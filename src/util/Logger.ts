@@ -17,7 +17,6 @@ export class Logger {
 
     name: string;
     file: string;
-    color: number;
     private writeStream: WriteStream;
 
     constructor(name: string, file: string) {
@@ -30,7 +29,7 @@ export class Logger {
         const filePath = TASKMASTER_DIRECTORY + this.file + dateFormat(new Date(), ".%Y_%m_%d_%H_%M_%S", true);
         if (!fs.existsSync(TASKMASTER_DIRECTORY))
             fs.mkdirSync(TASKMASTER_DIRECTORY);
-        const parent = path.dirname(filePath).split(path.sep).pop();
+        const parent = path.parse(filePath).dir;
         mkdirp(parent);
         this.writeStream = fs.createWriteStream(filePath, {encoding: 'utf16le'});
         process.on('exit', () => this.writeStream.close())
@@ -39,6 +38,6 @@ export class Logger {
     log(level: Level, message: string) {
         const date = dateFormat(new Date(), "%Y/%m/%d %H:%M:%S", false);
         console.log(`[${level}] [${date}] ${this.name}: ${message}`);
-        this.writeStream.write(`[${level}] [${date}]: ${message}`);
+        this.writeStream.write(`[${level}] [${date}]: ${message}\n`);
     }
 }

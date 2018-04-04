@@ -1,16 +1,25 @@
 #!/usr/bin/env node
 
-import {defaultConfigProcess} from "./server/types/ProcessConfig";
+import {
+    defaultConfigProcess, isValidconfigProcess,
+    ProcessConfig
+} from "./server/types/ProcessConfig";
 import * as fs from "fs";
 import {SocketHandler} from "./server/Sockethandler";
-import sprintf from "sprintf-js";
+import {Level, Logger} from "./util/Logger";
+import {ProgramHandler} from "./server/ProgramHandler";
+import {Status} from "./commands/list/Status";
+import {Stop} from "./commands/list/Stop";
 
 type Options = { port?: number, config: string, generate?: string, help?: string }
 
 const options: Options = require('minimist')(process.argv, {
     default: { port: 9898, config: "./config.json" },
-    alias: { "port": ["p"], "config": ["cfg"] }
+    alias: { "port": ["p"], "config": ["cfg"], "generate": ["g", "gen"]}
 });
+const global : Logger = new Logger("global", "global.log");
+
+export {global};
 
 class Application {
 
@@ -37,13 +46,35 @@ class Application {
     }
 
     private launchServer() {
+        this.registerCommands();
+        this.launchPrograms();
         new SocketHandler(this.options.port);
+    }
+
+    private launchPrograms() {
+        global.log(Level.INFO, 'Retrieving configuration');
+        if (fs.existsSync(this.options.config)) {
+            const arrayProcessConfig : Array<ProcessConfig> = require('../cfg.json');
+            for (let processConfig of arrayProcessConfig) {
+                const res = isValidconfigProcess(processConfig);
+                if (res == true) new ProgramHandler(processConfig);
+                else if (typeof res == "string") global.log(Level.WARN, `${res} This process can't be launched.`);
+            }
+        }
+        else {
+            global.log(Level.ERROR, 'No configuration found');
+            process.exit(0);
+        }
     }
 
     private showHelp() {
         console.log("Help: ...")
     }
+
+    private registerCommands() {
+        new Stop();
+        new Status();
+    }
 }
 
-console.log(sprintf.sprintf("%15s", "Hello wol"));
 new Application(options).main();

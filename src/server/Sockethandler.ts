@@ -19,6 +19,5 @@ export class SocketHandler {
             socket.on('data', (data) => callCommand(`${data}`, socket));
             socket.on('end', () => this.clients.splice(this.clients.indexOf(id), 1));
         }).listen(this.port);
-        console.log(`Taskmaster running at port ${this.port}\n`);
     }
 }

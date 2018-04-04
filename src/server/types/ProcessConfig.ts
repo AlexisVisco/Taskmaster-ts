@@ -37,3 +37,24 @@ export function defaultConfigProcess() : ProcessConfig[] {
         environment: {'env': 'optional'},
     }]
 }
+
+export function maskDefault(data : ProcessConfig) : ProcessConfig {
+    if (!data.startTimeSuccessful) data.startTimeSuccessful = 1;
+    if (!data.stopTimeSuccessful) data.stopTimeSuccessful = 1;
+    if (!data.autoRestart) data.autoRestart = RestartCondition.NEVER;
+    if (!data.startRetries) data.startRetries = 1;
+    if (!data.autoStart) data.autoStart = true;
+    return data;
+}
+
+export function isValidconfigProcess(data) : boolean | string {
+    const requiredFields = ["name", "cmd", "numProcess", "stopSignal", "exitCodes"];
+    if (data) {
+        for (let requiredField of requiredFields) {
+            if (!data[requiredField])
+                return `Missing field ${requiredField} in the configuration.`
+        }
+        return true;
+    }
+    return "Configuration is undefined.";
+}

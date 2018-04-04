@@ -12,6 +12,7 @@ export type CommandInfo = {
 }
 
 export function callCommand(command: string, socket: Socket) {
+    command = command.replace('\n', '');
     const pureCommand = commands.find(e => e.isCommand(command));
     if (pureCommand) {
         let ref: Command = undefined;
@@ -20,12 +21,12 @@ export function callCommand(command: string, socket: Socket) {
         for (let commandInfo of list) {
             const result = commandInfo.regex.exec(command.split(' ').slice(1).join(' '));
             if (!ref) {
-                ref = Object.assign({}, commandInfo.target);
+                ref = commandInfo.target.clone();
                 ref.commandName = capitalize(pureCommand.label);
                 ref.socket = socket;
             }
             if (result) {
-                commandInfo.value.apply(commandInfo.target, result.slice(1));
+                commandInfo.value.apply(ref, result.slice(1));
                 return;
             }
         }
@@ -48,7 +49,9 @@ class PureCommand {
 
     isCommand(command: string): boolean {
         const cmd = command.split(' ')[0];
-        return this.aliases.some(e => e == cmd) || this.label == cmd;
+        console.log("test:", cmd);
+        console.log(this.aliases.some(e => e == cmd) || this.label == cmd);
+        return this.aliases.some(e => e.toLowerCase() == cmd.toLowerCase()) || this.label.toLowerCase() == cmd.toLowerCase();
     }
 }
 

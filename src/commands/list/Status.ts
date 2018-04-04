@@ -6,12 +6,12 @@ import {ProgramHandler} from "../../server/ProgramHandler";
 @CommandLabel("status", ["st", "stats"])
 export class Status extends Command {
 
-    @CommandRouter(/^all$/g, {}, 3)
+    @CommandRouter(/^all$/i, {}, 3)
     showAll() {
         this.socket.write(stringify.stringifyProgramsHandlers());
     }
 
-    @CommandRouter(/^(\w+) (\d+)$/g, {}, 2)
+    @CommandRouter(/^(\w+) (\d+)$/i, {}, 2)
     showNameWithNumber(name, num) {
         const pe = ProgramHandler.getByNum(name, num);
         if (pe)
@@ -20,7 +20,7 @@ export class Status extends Command {
             this.socket.write(`No process with name ${name}_${num}.`);
     }
 
-    @CommandRouter(/^(\d+)$/g, {}, 1)
+    @CommandRouter(/^(\d+)$/i, {}, 1)
     showWithPid(pid) {
         const pe = ProgramHandler.getByPid(pid);
         if (pe)
@@ -31,7 +31,7 @@ export class Status extends Command {
         }
     }
 
-    @CommandRouter(/^([a-zA-Z0-9]+)$/g)
+    @CommandRouter(/^([a-zA-Z0-9]+)$/i)
     showWithName(name) {
         const pro = ProgramHandler.getByname(name);
         if (pro)
@@ -46,6 +46,10 @@ export class Status extends Command {
             .helpCommand("status <name>", "Show the status of the processes that contain $name.")
             .helpCommand("status <name> <num>", "Show the status of the processes that contain $name and the processes number $num.")
             .helpCommand("status all", "Show globally the status of all processes.")
+    }
+
+    clone() {
+        return new Status();
     }
 
 }

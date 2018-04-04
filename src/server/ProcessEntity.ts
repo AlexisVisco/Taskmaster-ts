@@ -36,7 +36,8 @@ export class ProcessEntity {
         if (c.workingDirectory) opt.cwd = c.workingDirectory;
         if (c.environment) opt.env = c.environment;
         if (c.stopSignal) opt.killSignal = c.stopSignal;
-        opt.maxBuffer = 1000000 * 10;
+        opt.maxBuffer =  1000 * 1000 * 1000;
+        return opt;
     }
 
     public run() {
@@ -49,10 +50,7 @@ export class ProcessEntity {
             process.umask(parseInt(c.umask, 8));
         this.timeAtLaunch = new Date();
         this._status = ProcessStatus.LAUNCHING;
-        this.process = exec(c.cmd, this.buildOption(), error => {
-            this.parent.out.log(Level.ERROR, `Error while launching process ${c.name} (error: ${error}).`);
-            this._status = ProcessStatus.TERMINATED;
-        });
+        this.process = exec(c.cmd, this.buildOption());
         this.atExit();
         this.redirectProcess();
         process.umask(currentUmask);
@@ -93,11 +91,11 @@ export class ProcessEntity {
     private redirectProcess() {
         const c = this.parent.config;
         if (c.stderr) {
-            this.wsErr = fs.createWriteStream(c.stderr, {encoding: 'utf16le'});
-            this.process.stdout.pipe(this.wsErr);
+            this.wsErr = fs.createWriteStream(c.stderr + this.id, {encoding: 'utf8'});
+            this.process.stderr.pipe(this.wsErr);
         }
         if (c.stdout) {
-            this.wsErr = fs.createWriteStream(c.stdout, {encoding: 'utf16le'});
+            this.wsOut = fs.createWriteStream(c.stdout + this.id, {encoding: 'utf8'});
             this.process.stdout.pipe(this.wsOut);
         }
     }
@@ -110,7 +108,7 @@ export class ProcessEntity {
     private restartOnFail() {
         const c = this.parent.config;
         if (this._status == ProcessStatus.LAUNCHING && c.startRetries >= this.startRetries) {
-            this.parent.out.log(Level.INFO, `Restarting because fail: process ${c.name}, remaining ${c.startRetries - this.startRetries}.`)
+            this.parent.out.log(Level.INFO, `Restarting because fail: process ${c.name}, remaining ${c.startRetries - this.startRetries}.`);
             this._status = ProcessStatus.TERMINATED;
             this.startRetries++;
             this.run();
