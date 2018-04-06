@@ -21,6 +21,7 @@ export class ProcessEntity {
     public needToBeRestarted: boolean = true;
     public endAt: Date;
     private _status: ProcessStatus;
+    private forceRestart: boolean;
 
     private wsOut: WriteStream;
     private wsErr: WriteStream;
@@ -61,9 +62,13 @@ export class ProcessEntity {
         this.process.on('exit', (code) => { //todo fix kill null when stop manually
             this.closeRedirectedProcess();
             this.endAt = new Date();
-            this.parent.out.log(Level.INFO, `Exit: process ${this.currentName} with value ${code}.`);
+            this.parent.out.log(Level.INFO, `Exit: process ${this.currentName} with value ${code == null ? "-1" : code}.`);
             this.updateStatus();
-            if (this.needToBeRestarted && !this.restartOnFail() && this._status == ProcessStatus.LAUNCHED) {
+            if (this.forceRestart) {
+                this.forceRestart = false;
+                this.run();
+            }
+            else if (this.needToBeRestarted && !this.restartOnFail() && this._status == ProcessStatus.LAUNCHED) {
                 this._status = ProcessStatus.TERMINATED;
                 if ((c.autoRestart == RestartCondition.ALWAYS) ||
                     (c.autoRestart == RestartCondition.UNEXPECTED && !c.exitCodes.some(e => e == code)))
@@ -74,16 +79,11 @@ export class ProcessEntity {
         })
     }
 
-    private kill(fn?: any) {
+    private kill() {
         if (this.isAlive) {
             this._status = ProcessStatus.TERMINATING;
             this.needToBeRestarted = false;
-            if (fn != undefined)
-                this.process.on('exit', fn());
-            this.process.kill();
-            setTimeout(() => {
-                if (this.isAlive) this.kill(fn);
-            }, this.parent.config.stopTimeSuccessful * 1000)
+            this.process.kill(this.parent.config.stopSignal);
         }
     }
 
@@ -118,12 +118,13 @@ export class ProcessEntity {
 
     public stop() {
         this.parent.out.log(Level.INFO, `Terminating: process ${this.currentName}.`);
-        this.kill(undefined);
+        this.kill();
     }
 
     public restart() {
         this.parent.out.log(Level.INFO, `Restarting: process ${this.currentName}.`);
-        if (this.isAlive) this.kill(() => this.run());
+        this.forceRestart = true;
+        if (this.isAlive) this.kill();
         else this.run();
     }
 

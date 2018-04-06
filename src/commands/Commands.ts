@@ -49,8 +49,6 @@ class PureCommand {
 
     isCommand(command: string): boolean {
         const cmd = command.split(' ')[0];
-        console.log("test:", cmd);
-        console.log(this.aliases.some(e => e == cmd) || this.label == cmd);
         return this.aliases.some(e => e.toLowerCase() == cmd.toLowerCase()) || this.label.toLowerCase() == cmd.toLowerCase();
     }
 }

@@ -15,7 +15,6 @@ export class SocketHandler {
         net.createServer((socket: Socket) => {
             const id = {socket, name: randId(5)};
             this.clients.push(id);
-            socket.write("Welcome to taskmaster world!\n");
             socket.on('data', (data) => callCommand(`${data}`, socket));
             socket.on('end', () => this.clients.splice(this.clients.indexOf(id), 1));
         }).listen(this.port);

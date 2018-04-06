@@ -10,7 +10,8 @@ import {Level, Logger} from "./util/Logger";
 import {ProgramHandler} from "./server/ProgramHandler";
 import {Status} from "./commands/list/Status";
 import {Stop} from "./commands/list/Stop";
-import {TableGenerator} from "./util/TableGenerator";
+import {Restart} from "./commands/list/Restart";
+import {Start} from "./commands/list/Start";
 
 type Options = { port?: number, config: string, generate?: string, help?: string }
 
@@ -75,6 +76,8 @@ class Application {
     private registerCommands() {
         new Stop();
         new Status();
+        new Restart();
+        new Start();
     }
 }
 

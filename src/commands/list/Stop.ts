@@ -21,7 +21,7 @@ export class Stop extends Command {
         else this.socket.write('No program for this name.\n');
     }
 
-    @CommandRouter(/^(\d+)$/i)
+    @CommandRouter(/^(\d+)$/i, {}, 2)
     processPid(pid) {
         const pe = ProgramHandler.getByPid(parseInt(pid));
         if (pe) {
@@ -31,10 +31,10 @@ export class Stop extends Command {
             }
             else this.socket.write('Process is already stopped.\n');
         }
-        else this.socket.write('No process for this pid.\n');
+        else this.socket.write('No process found.\n');
     }
 
-    @CommandRouter(/^(\w+) (\d+)$/i)
+    @CommandRouter(/^(\w+) (\d+)$/i, {}, 5)
     processNameNum(name, num) {
         const pe = ProgramHandler.getByNum(name, parseInt(num));
         this.processPid(pe ? pe.pid : undefined);

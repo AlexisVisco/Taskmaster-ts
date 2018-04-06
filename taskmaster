@@ -1,0 +1,6 @@
+for param in "$*"
+do
+ nc localhost 9898 <<e
+$param
+e
+done

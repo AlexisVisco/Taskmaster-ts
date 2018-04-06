@@ -4,7 +4,7 @@ export interface ProcessConfig {
     name: string
     cmd: string
     numProcess: number
-    stopSignal: string | number
+    stopSignal: string
     exitCodes: number[]
     startTimeSuccessful?: number
     workingDirectory?: string
@@ -23,7 +23,7 @@ export function defaultConfigProcess() : ProcessConfig[] {
         name: "My awesome program",
         cmd: "awesome-program -f .",
         numProcess: 1,
-        stopSignal: 137,
+        stopSignal: 'SIGTERM',
         exitCodes: [0, 1],
         startTimeSuccessful: 5,
         workingDirectory: "/opt/process_location",

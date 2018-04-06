@@ -19,7 +19,7 @@ export class ProgramHandler {
         this.out.log(Level.INFO, `--------------- NEW INSTANCE ${config.name.toUpperCase()} ---------------`);
         this.config = config;
         if (config.autoStart)
-            this.startAll();
+            this.startAllProcesses();
         ProgramHandler.programs.push(this);
     }
 
@@ -41,7 +41,7 @@ export class ProgramHandler {
         return false;
     }
 
-    private startAll() : boolean {
+    public startAllProcesses() : boolean {
         if (!this.started || this.canRestart()) {
             this.started = true;
             this.startedAt = new Date();
@@ -55,11 +55,8 @@ export class ProgramHandler {
         return false;
     }
 
-    private canRestart() : boolean {
-        for (const [_, entity] of this.processes.entries()) {
-            if (entity.isAlive) return false;
-        }
-        return true;
+    public canRestart() : boolean {
+        return !Array.from(this.processes.values()).some(e => e.isAlive);
     }
 
     get aliveProcesses() : number {
@@ -82,7 +79,7 @@ export class ProgramHandler {
     public static getByPid(pid: number) : ProcessEntity | undefined {
         for (let ph of ProgramHandler.programs) {
             for (let [_, entity] of ph.processes.entries())
-                if (entity.isAlive && entity.pid) return entity;
+                if (entity.isAlive && entity.pid == pid) return entity;
         }
         return undefined;
     }
