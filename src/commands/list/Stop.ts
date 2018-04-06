@@ -7,7 +7,7 @@ export class Stop extends Command {
 
     @CommandRouter(/^all$/i, {}, 2)
     processAll() {
-        this.socket.write('Stopping all process !');
+        this.socket.write('Stopping all process !\n');
         ProgramHandler.programs.forEach((program) => program.killAllProcesses());
     }
 
@@ -15,28 +15,28 @@ export class Stop extends Command {
     processName(name) {
         const prog = ProgramHandler.getByname(name);
         if (prog && prog.aliveProcesses != 0) {
-            this.socket.write(`Stopping process all processes for program ${prog.config.name}`);
+            this.socket.write(`Stopping process all processes for program ${prog.config.name}.\n`);
             prog.killAllProcesses();
         }
-        else this.socket.write('No program for this name.');
+        else this.socket.write('No program for this name.\n');
     }
 
     @CommandRouter(/^(\d+)$/i)
     processPid(pid) {
-        const pe = ProgramHandler.getByPid(pid);
+        const pe = ProgramHandler.getByPid(parseInt(pid));
         if (pe) {
             if (pe.isAlive) {
-                this.socket.write(`Stopping process ${pe.currentName}`);
+                this.socket.write(`Stopping process ${pe.currentName}.\n`);
                 pe.stop();
             }
-            else this.socket.write('Process is already stopped.');
+            else this.socket.write('Process is already stopped.\n');
         }
-        else this.socket.write('No process for this pid.');
+        else this.socket.write('No process for this pid.\n');
     }
 
     @CommandRouter(/^(\w+) (\d+)$/i)
     processNameNum(name, num) {
-        const pe = ProgramHandler.getByNum(name, num);
+        const pe = ProgramHandler.getByNum(name, parseInt(num));
         this.processPid(pe ? pe.pid : undefined);
     }
 

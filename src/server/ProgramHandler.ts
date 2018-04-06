@@ -69,10 +69,10 @@ export class ProgramHandler {
 
     get stringState() : string {
         const i = Math.round(((this.aliveProcesses / this.config.numProcess) * 3.0));
-        if (i == 1) return Color.RED_BOLD + "danger :x" + Color.RESET;
-        if (i == 2) return Color.YELLOW_BOLD + "warning :o" + Color.RESET;
-        if (i == 3) return Color.GREEN_BOLD_BRIGHT + "like a charm c:" + Color.RESET;
-        else return Color.WHITE_BRIGHT + Color.RED_BACKGROUND + "critical :z" + Color.RESET;
+        if (i == 1) return Color.RED_BOLD + "Danger" + Color.RESET;
+        if (i == 2) return Color.YELLOW_BOLD + "Warning" + Color.RESET;
+        if (i == 3) return Color.GREEN_BOLD_BRIGHT + "Ok" + Color.RESET;
+        else return Color.WHITE_BRIGHT + Color.RED_BACKGROUND + "Critical" + Color.RESET;
     }
 
     get strStartedAt() : string {
@@ -88,7 +88,7 @@ export class ProgramHandler {
     }
 
     public static getByNum(name: string, num: number) : ProcessEntity | undefined {
-        const prog = ProgramHandler.programs.find(e => e.config.name == name);
+        const prog = ProgramHandler.programs.find(e => e.config.name.toLowerCase() == name.toLowerCase());
         if (prog) {
             const pro = prog.processes.get(num);
             if (pro) return pro;

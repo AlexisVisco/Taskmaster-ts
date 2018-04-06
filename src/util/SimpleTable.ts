@@ -13,7 +13,7 @@ export class SimpleTable extends Map<String, String> {
 
     toStr() {
         let str = '';
-        this.forEach((k, v) => str += sprintf.sprintf(`%${this._longestWord}s: %s\n`, k, v));
+        this.forEach((k, v) => str += sprintf.sprintf(`%${this._longestWord}s: %s\n`, v, k));
         return str;
     }
 }

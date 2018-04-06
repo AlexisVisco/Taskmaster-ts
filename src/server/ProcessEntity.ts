@@ -42,7 +42,7 @@ export class ProcessEntity {
 
     public run() {
         const c = this.parent.config;
-        this.parent.out.log(Level.INFO, `Launching: process ${c.name}.`);
+        this.parent.out.log(Level.INFO, `Launching: process ${this.currentName}.`);
         this.needToBeRestarted = true;
         this.restartTimes++;
         const currentUmask = process.umask();
@@ -58,10 +58,10 @@ export class ProcessEntity {
 
     private atExit() {
         const c = this.parent.config;
-        this.process.on('exit', (code) => {
+        this.process.on('exit', (code) => { //todo fix kill null when stop manually
             this.closeRedirectedProcess();
             this.endAt = new Date();
-            this.parent.out.log(Level.INFO, `Exit: process ${c.name} with value ${code}.`);
+            this.parent.out.log(Level.INFO, `Exit: process ${this.currentName} with value ${code}.`);
             this.updateStatus();
             if (this.needToBeRestarted && !this.restartOnFail() && this._status == ProcessStatus.LAUNCHED) {
                 this._status = ProcessStatus.TERMINATED;
@@ -87,7 +87,6 @@ export class ProcessEntity {
         }
     }
 
-
     private redirectProcess() {
         const c = this.parent.config;
         if (c.stderr) {
@@ -108,7 +107,7 @@ export class ProcessEntity {
     private restartOnFail() {
         const c = this.parent.config;
         if (this._status == ProcessStatus.LAUNCHING && c.startRetries >= this.startRetries) {
-            this.parent.out.log(Level.INFO, `Restarting because fail: process ${c.name}, remaining ${c.startRetries - this.startRetries}.`);
+            this.parent.out.log(Level.INFO, `Restarting because fail: process ${this.currentName}, remaining ${c.startRetries - this.startRetries}.`);
             this._status = ProcessStatus.TERMINATED;
             this.startRetries++;
             this.run();
@@ -118,12 +117,12 @@ export class ProcessEntity {
     }
 
     public stop() {
-        this.parent.out.log(Level.INFO, `Terminating: process ${this.parent.config.name}.`);
+        this.parent.out.log(Level.INFO, `Terminating: process ${this.currentName}.`);
         this.kill(undefined);
     }
 
     public restart() {
-        this.parent.out.log(Level.INFO, `Restarting: process ${this.parent.config.name}.`);
+        this.parent.out.log(Level.INFO, `Restarting: process ${this.currentName}.`);
         if (this.isAlive) this.kill(() => this.run());
         else this.run();
     }
@@ -155,7 +154,7 @@ export class ProcessEntity {
 
     get amountRestartBecauseFail() : number { return this.startRetries }
 
-    get pid() : number { return process.pid }
+    get pid() : number { return this.process.pid }
 
     get config() : ProcessConfig { return this.parent.config }
 

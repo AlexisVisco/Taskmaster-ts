@@ -10,6 +10,7 @@ import {Level, Logger} from "./util/Logger";
 import {ProgramHandler} from "./server/ProgramHandler";
 import {Status} from "./commands/list/Status";
 import {Stop} from "./commands/list/Stop";
+import {TableGenerator} from "./util/TableGenerator";
 
 type Options = { port?: number, config: string, generate?: string, help?: string }
 
