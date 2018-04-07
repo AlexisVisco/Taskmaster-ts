@@ -44,10 +44,10 @@ export class TableGenerator {
         for (let i = 0; i < headerList.length; i++) {
             map.set(i, 0);
             if ((len = Color.extracter(headerList[i]).length) > map.get(i))
-                map.set(i, len + 5);
+                map.set(i, len + 8);
             rowList.forEach(x =>  {
                 if ((len = Color.extracter(x[i]).length) > map.get(i))
-                    map.set(i, len + 5);
+                    map.set(i, len + 8);
             });
         }
         return map;

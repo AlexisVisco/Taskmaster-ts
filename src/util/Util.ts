@@ -2,11 +2,11 @@ import * as path from "path";
 import * as fs from "fs";
 import crypto from "crypto";
 
-export function capitalize(string) : string {
+export function capitalize(string): string {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export function getUserHome() : string {
+export function getUserHome(): string {
     return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 }
 
@@ -27,23 +27,59 @@ export function mkdirp(targetDir, {isRelativeToScript = false} = {}) {
     }, initDir);
 }
 
-export function dateFormat (date : Date, formatedString : string, utc) : string {
-    utc = utc ? 'getUTC' : 'get';
-    return formatedString.replace (/%[YmdHMS]/g, function (m) {
-        switch (m) {
-            case '%Y': return date[utc + 'FullYear'] ();
-            case '%m': m = 1 + date[utc + 'Month'] (); break;
-            case '%d': m = date[utc + 'Date'] (); break;
-            case '%H': m = date[utc + 'Hours'] (); break;
-            case '%M': m = date[utc + 'Minutes'] (); break;
-            case '%S': m = date[utc + 'Seconds'] (); break;
-            default: return m.slice (1);
+export function humanDuration(seconds: number) {
+    if (seconds === 0) return 'now';
+    let years = Math.floor(seconds / (60 * 60 * 24 * 365));
+    let days = Math.floor(seconds / (60 * 60 * 24)) % 365;
+    let hours = Math.floor(seconds / (60 * 60)) % 24;
+    let minutes = Math.floor(seconds / 60) % 60;
+    seconds = seconds % 60;
+    let duration = [years, days, hours, minutes, seconds];
+    let units = ['year', 'day', 'hour', 'minute', 'second'];
+    let linked = duration.map(function (el, ind) {
+        if (el > 1) {
+            return el.toFixed(1) + ' ' + units[ind] + 's'
         }
-        return ('0' + m).slice (-2);
+        if (el === 1) {
+            return el.toFixed(1) + ' ' + units[ind]
+        }
+    }).filter(el => el !== undefined);
+    if (linked.length > 1) {
+        let last = linked.pop();
+        return linked.join(', ') + ' and ' + last;
+    }
+    return linked[0];
+}
+
+export function dateFormat(date: Date, formatedString: string, utc): string {
+    utc = utc ? 'getUTC' : 'get';
+    return formatedString.replace(/%[YmdHMS]/g, function (m) {
+        switch (m) {
+            case '%Y':
+                return date[utc + 'FullYear']();
+            case '%m':
+                m = 1 + date[utc + 'Month']();
+                break;
+            case '%d':
+                m = date[utc + 'Date']();
+                break;
+            case '%H':
+                m = date[utc + 'Hours']();
+                break;
+            case '%M':
+                m = date[utc + 'Minutes']();
+                break;
+            case '%S':
+                m = date[utc + 'Seconds']();
+                break;
+            default:
+                return m.slice(1);
+        }
+        return ('0' + m).slice(-2);
     });
 }
 
-export function randId(count: number) : string {
+export function randId(count: number): string {
     return crypto.randomBytes(count).toString("hex");
 }
 
