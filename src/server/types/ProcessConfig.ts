@@ -38,6 +38,26 @@ export function defaultConfigProcess() : ProcessConfig[] {
     }]
 }
 
+export function processConfigkeys() {
+    return [
+        "name",
+        "cmd",
+        "numProcess",
+        "stopSignal",
+        "exitCodes",
+        "startTimeSuccessful",
+        "workingDirectory",
+        "stopTimeSuccessful",
+        "autoRestart",
+        "startRetries",
+        "autoStart",
+        "umask",
+        "stderr",
+        "stdout",
+        "environment"
+    ]
+}
+
 export function maskDefault(data : ProcessConfig) : ProcessConfig {
     if (!data.startTimeSuccessful) data.startTimeSuccessful = 1;
     if (!data.stopTimeSuccessful) data.stopTimeSuccessful = 1;
