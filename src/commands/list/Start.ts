@@ -19,7 +19,7 @@ export class Start extends Command {
 
     @CommandRouter(/(\w+)/i)
     startProcess(name) {
-        const prog = ProgramHandler.getByname(name);
+        const prog = ProgramHandler.getByName(name);
         if (prog) {
             if (!prog.canRestart()) this.socket.write(`Can't start all processes.\n`);
             else {
@@ -32,7 +32,7 @@ export class Start extends Command {
 
     @CommandRouter(/^not-launched (\w+)$/i, {}, 2)
     startProcessNotLaunched(name) {
-        const prog = ProgramHandler.getByname(name);
+        const prog = ProgramHandler.getByName(name);
         if (prog) {
             Array.from(prog.processes.values()).forEach(a => {
                 if (!a.isAlive) {

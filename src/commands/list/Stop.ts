@@ -13,7 +13,7 @@ export class Stop extends Command {
 
     @CommandRouter(/^(\w+)$/i, {}, 1)
     processName(name) {
-        const prog = ProgramHandler.getByname(name);
+        const prog = ProgramHandler.getByName(name);
         if (prog && prog.aliveProcesses != 0) {
             this.socket.write(`Stopping process all processes for program ${prog.config.name}.\n`);
             prog.killAllProcesses();

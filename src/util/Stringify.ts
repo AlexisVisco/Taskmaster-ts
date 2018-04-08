@@ -10,6 +10,7 @@ import {ProcessConfig, processConfigkeys} from "../server/types/ProcessConfig";
 export function stringifyProgramsHandlers(): string {
     const headers = ["Name", "Health", "Processes", "Command", "Launched at"];
     const rows: Array<Array<string>> = [];
+    console.log(ProgramHandler.programs);
     ProgramHandler.programs.forEach(e => {
         rows.push([e.config.name, e.stringState,
             e.aliveProcesses.toString() + '/' + e.config.numProcess.toString(),

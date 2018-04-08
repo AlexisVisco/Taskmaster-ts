@@ -14,7 +14,7 @@ export class Restart extends Command {
 
     @CommandRouter(/^(\w+)$/i, {}, 1)
     processName(name) {
-        const prog = ProgramHandler.getByname(name);
+        const prog = ProgramHandler.getByName(name);
         if (prog) {
             this.socket.write(`Restarting all processes of ${name}.\n`);
             Array.from(prog.processes.values()).forEach(e => e.restart());

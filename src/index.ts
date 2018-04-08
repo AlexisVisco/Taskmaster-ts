@@ -99,7 +99,6 @@ export class Application {
     }
 }
 
-console.log(JSON.stringify("hey"));
 const app: Application = Application.instance();
 app.main();
 

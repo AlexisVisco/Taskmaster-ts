@@ -63,7 +63,7 @@ export function maskDefault(data : ProcessConfig) : ProcessConfig {
     if (!data.stopTimeSuccessful) data.stopTimeSuccessful = 1;
     if (!data.autoRestart) data.autoRestart = RestartCondition.NEVER;
     if (!data.startRetries) data.startRetries = 1;
-    if (!data.autoStart) data.autoStart = true;
+    if (data.autoStart == undefined) data.autoStart = true;
     return data;
 }
 

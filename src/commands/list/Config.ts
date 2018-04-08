@@ -3,9 +3,47 @@ import {CommandLabel, CommandRouter} from "../Commands";
 import {app} from "../../index";
 import {stringifyConfig, stringifyDiffConfig} from "../../util/Stringify";
 import {ProcessConfig} from "../../server/types/ProcessConfig";
+import {ProgramHandler} from "../../server/ProgramHandler";
 
 @CommandLabel("config", ["cfg", "cf", "conf"])
 export class Config extends Command {
+
+    @CommandRouter(/^reload all$/i, {}, 3)
+    configReloadAll() {
+        const treatedConfig = [];
+        const treat = (f: Array<ProcessConfig>) => {
+            f.forEach(c => {
+                if (!treatedConfig.some(e => e == c.name))
+                {
+                    this.configReloadName(c.name);
+                    treatedConfig.push(c.name);
+                }
+            })
+        };
+
+        treat(Array.from(app.configs.values()));
+        treat(app.actualDiskConfig());
+    }
+
+    @CommandRouter(/^reload (\w+)$/i, {}, 2)
+    configReloadName(name) {
+        const ph = ProgramHandler.getByName(name);
+        const npc = app.actualDiskConfig().find(e => e.name == name);
+
+        if (!ph && !npc) this.socket.write(`No new config or old config found ${name}.\n`);
+        else if (!ph && npc) {
+            this.socket.write(`Program ${name} added.\n`);
+            new ProgramHandler(npc);
+        }
+        else if (ph && !npc) {
+            this.socket.write(`Program ${name} deleted.\n`);
+            ph.destroy();
+        }
+        else {
+            this.socket.write(`Update config for ${name}.\n`);
+            ph.updateConfig(npc);
+        }
+    }
 
     @CommandRouter(/^diff all$/i, {}, 4)
     configDiffAll() {

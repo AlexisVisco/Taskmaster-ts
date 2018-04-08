@@ -18,8 +18,9 @@ export class ProgramHandler {
         this.out = new Logger(config.name, `/${config.name}/at`);
         this.out.log(Level.INFO, `--------------- NEW INSTANCE ${config.name.toUpperCase()} ---------------`);
         this.config = config;
-        if (config.autoStart)
+        if (config.autoStart) {
             this.startAllProcesses();
+        }
         ProgramHandler.programs.push(this);
     }
 
@@ -34,8 +35,8 @@ export class ProgramHandler {
 
     public killAllProcesses() : boolean {
         if (this.started) {
-            for (let [_, entity] of this.processes.entries())
-                entity.stop();
+            this.started = false;
+            for (let [_, entity] of this.processes.entries()) entity.stop();
             return true;
         }
         return false;
@@ -53,6 +54,39 @@ export class ProgramHandler {
             return true;
         }
         return false;
+    }
+
+    public updateConfig(pc: ProcessConfig) {
+        this.out.log(Level.INFO, `Reloading config`);
+        const numProcess = pc.numProcess;
+        const oldProc = this.config.numProcess;
+        console.log(this.started, numProcess, oldProc);
+        if (this.started) {
+            if (numProcess > oldProc) {
+                for (let i = oldProc; i < numProcess; i++) {
+                    const pe = new ProcessEntity(this, i);
+                    this.processes.set(i, pe);
+                    this.out.log(Level.INFO, `Adding process ${i} cause reload.`);
+                    pe.run();
+                }
+            }
+            else if (oldProc > numProcess) {
+                for (let i = oldProc - 1; i > numProcess - 1; i--) {
+                    this.out.log(Level.INFO, `Removing process ${i} cause reload.`);
+                    const pe = this.processes.get(i);
+                    if (pe) pe.stop();
+                    this.processes.delete(i);
+                }
+            }
+        }
+        this.config = pc;
+    }
+
+    public destroy() {
+        this.out.log(Level.INFO, `Removing program ${this.config.name}.`);
+        if (this.started)
+           Array.from(this.processes.values()).forEach(e => e.stop());
+        ProgramHandler.programs = ProgramHandler.programs.filter(e => e.config.name != this.config.name);
     }
 
     public canRestart() : boolean {
@@ -73,7 +107,7 @@ export class ProgramHandler {
     }
 
     get strStartedAt() : string {
-        return dateFormat(this.startedAt, "%d/%m %H:%M:%S", false);
+        return this.startedAt ? dateFormat(this.startedAt, "%d/%m %H:%M:%S", false) : 'Not launched';
     }
 
     public static getByPid(pid: number) : ProcessEntity | undefined {
@@ -94,7 +128,7 @@ export class ProgramHandler {
         return undefined;
     }
 
-    public static getByname(name: string) : ProgramHandler | undefined {
+    public static getByName(name: string) : ProgramHandler | undefined {
         const prog = ProgramHandler.programs.find(e => e.config.name == name);
         if (prog) return prog;
         return undefined;

@@ -33,7 +33,7 @@ export class Status extends Command {
 
     @CommandRouter(/^([a-zA-Z0-9]+)$/i)
     showWithName(name) {
-        const pro = ProgramHandler.getByname(name);
+        const pro = ProgramHandler.getByName(name);
         if (pro)
             this.socket.write(stringify.stringifyProgramHandler(pro));
         else
