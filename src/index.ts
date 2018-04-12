@@ -13,6 +13,7 @@ import {Stop} from "./commands/list/Stop";
 import {Restart} from "./commands/list/Restart";
 import {Start} from "./commands/list/Start";
 import {Config} from "./commands/list/Config";
+import {Help} from "./commands/list/Help";
 
 type Options = { port?: number, config: string, generate?: string, help?: string }
 
@@ -20,7 +21,8 @@ const options: Options = require('minimist')(process.argv, {
     default: { port: 9898, config: "./config.json" },
     alias: { "port": ["p"], "config": ["cfg"], "generate": ["g", "gen"]}
 });
-const global : Logger = new Logger("global", "/global.log");
+
+const global : Logger = new Logger("global");
 
 export {global};
 
@@ -72,7 +74,7 @@ export class Application {
         }
         else {
             global.log(Level.ERROR, 'No configuration found');
-            process.exit(0);
+            setTimeout(process.exit, 100);
         }
     }
 
@@ -86,6 +88,7 @@ export class Application {
         new Restart();
         new Start();
         new Config();
+        new Help();
     }
 
     public actualDiskConfig() : Array<ProcessConfig> {

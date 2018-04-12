@@ -1,18 +1,23 @@
 import {CommandLabel, CommandRouter} from "../Commands";
 import {Command} from "../Command";
-import {CommandAction} from "../CommandAction";
 import {ProgramHandler} from "../../server/ProgramHandler";
 
-@CommandLabel("restart", ["relaunch", "reexecute"])
+@CommandLabel("restart", "Restart programs, program, processes, process, pid.", ["relaunch", "reexecute"])
 export class Restart extends Command {
 
-    @CommandRouter(/^all$/i, {}, 2)
+    @CommandRouter(/^all$/i, {
+        name: "restart all",
+        description: "Restart all processes of each programs."
+    }, 2)
     processAll() {
         this.socket.write('Restarting all processes !\n');
         ProgramHandler.programs.forEach(e => Array.from(e.processes.values()).forEach(x => x.restart()))
     }
 
-    @CommandRouter(/^(\w+)$/i, {}, 1)
+    @CommandRouter(/^(\w+)$/i, {
+        name: "restart <name>",
+        description: "Restart all processes in program $name"
+    }, 1)
     processName(name) {
         const prog = ProgramHandler.getByName(name);
         if (prog) {
@@ -22,7 +27,10 @@ export class Restart extends Command {
         else this.socket.write(`No program named ${name}.\n`);
     }
 
-    @CommandRouter(/^(\w+) (\d+)$/i, {}, 3)
+    @CommandRouter(/^(\w+) (\d+)$/i, {
+        name: "restart <name> <num>",
+        description: "Restart process number $num in program $name."
+    }, 3)
     processNameNum(name, num) {
         num = parseInt(num);
         const proc = ProgramHandler.getByNum(name, num);
@@ -33,7 +41,10 @@ export class Restart extends Command {
         else this.socket.write(`No process named ${name}_${num}.\n`);
     }
 
-    @CommandRouter(/^(\d+)$/i, {}, 2)
+    @CommandRouter(/^(\d+)$/i, {
+        name: "restart <pid>",
+        description: "Restart the processes with pid $pid."
+    }, 2)
     processPid(pid) {
         pid = parseInt(pid);
         const proc = ProgramHandler.getByPid(pid);
@@ -47,10 +58,10 @@ export class Restart extends Command {
 
     help() {
         this.helpLine()
-            .helpCommand("restart <name> <num>", "Restart process number $num in program $name")
-            .helpCommand("restart <name>", "Restart all processes in program $name")
-            .helpCommand("restart <pid>", "Restart the processes with pid $pid")
-            .helpCommand("restart all", "Restart all processes of each programs")
+            .helpCommand("restart <name> <num>", "Restart process number $num in program $name.")
+            .helpCommand("restart <name>", "Restart all processes in program $name.")
+            .helpCommand("restart <pid>", "Restart the processes with pid $pid.")
+            .helpCommand("restart all", "Restart all processes of each programs.")
     }
 
 }

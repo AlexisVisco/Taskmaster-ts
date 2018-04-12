@@ -2,10 +2,13 @@ import {Command} from "../Command";
 import {CommandLabel, CommandRouter} from "../Commands";
 import {ProgramHandler} from "../../server/ProgramHandler";
 
-@CommandLabel("start", ["start", "go"])
+@CommandLabel("start", "Start programs, program, processes, process.",["start", "go"])
 export class Start extends Command {
 
-    @CommandRouter(/^not-launched$/i, {}, 3)
+    @CommandRouter(/^not-launched$/i, {
+        name: 'start not-launched',
+        description: 'Start all processes that are not launched yet.'
+    }, 3)
     launchNotLaunched() {
         ProgramHandler.programs.forEach(e => {
             Array.from(e.processes.values()).forEach(a => {
@@ -17,7 +20,10 @@ export class Start extends Command {
         })
     }
 
-    @CommandRouter(/(\w+)/i)
+    @CommandRouter(/(\w+)/i, {
+        name: 'start not-launched <name>',
+        description: 'Start all processes that are not launched yet in program $name.'
+    })
     startProcess(name) {
         const prog = ProgramHandler.getByName(name);
         if (prog) {
@@ -30,7 +36,10 @@ export class Start extends Command {
         else this.socket.write(`No program found for ${name}.\n`)
     }
 
-    @CommandRouter(/^not-launched (\w+)$/i, {}, 2)
+    @CommandRouter(/^not-launched (\w+)$/i, {
+        name: 'start <name>',
+        description: 'Launch processes for the program named $name in the configuration.'
+    }, 2)
     startProcessNotLaunched(name) {
         const prog = ProgramHandler.getByName(name);
         if (prog) {
@@ -44,7 +53,10 @@ export class Start extends Command {
         else this.socket.write(`No program found for ${name}.\n`)
     }
 
-    @CommandRouter(/(\w+) (\d+)/i, {}, 4)
+    @CommandRouter(/(\w+) (\d+)/i, {
+        name: 'start <name> <number>',
+        description: 'Launch the processes number $number of the program $name.'
+    }, 4)
     startSpecificProcess(name, num) {
         num = parseInt(num);
         const proc = ProgramHandler.getByNum(name, num);

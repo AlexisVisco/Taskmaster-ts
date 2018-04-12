@@ -16,35 +16,52 @@ export function callCommand(command: string, socket: Socket) {
     const pureCommand = commands.find(e => e.isCommand(command));
     if (pureCommand) {
         let ref: Command = undefined;
-        const list = commandsInfo.get(pureCommand.className)
-            .sort((a, b) => b.priority - a.priority);
-        for (let commandInfo of list) {
-            const result = commandInfo.regex.exec(command.split(' ').slice(1).join(' '));
-            if (!ref) {
-                ref = commandInfo.target.clone();
-                ref.commandName = capitalize(pureCommand.label);
-                ref.socket = socket;
+        let list = commandsInfo.get(pureCommand.className);
+        if (list) {
+            list = list.sort((a, b) => b.priority - a.priority);
+            for (let commandInfo of list) {
+                const result = commandInfo.regex.exec(command.split(' ').slice(1).join(' '));
+                if (!ref) {
+                    ref = commandInfo.target.clone();
+                    ref.commandName = capitalize(pureCommand.label);
+                    ref.socket = socket;
+                }
+                if (result) {
+                    commandInfo.value.apply(ref, result.slice(1));
+                    return;
+                }
             }
-            if (result) {
-                commandInfo.value.apply(ref, result.slice(1));
-                return;
-            }
+            if (ref)
+                ref.help();
         }
-        if (ref)
+        else {
+            const {Help} = require(`./list/Help`);
+            ref = new Help();
+            ref.socket = socket;
             ref.help();
+        }
     }
 }
 
-class PureCommand {
+export function getCommandList() {
+    return commands;
+}
+export function getCommandInfo() {
+    return commandsInfo;
+}
+
+export class PureCommand {
 
     className: string;
     label: string;
     aliases: string[];
+    desc: string;
 
-    constructor(className: string, label: string, alias: string[]) {
+    constructor(className: string, label: string, desc: string, alias: string[]) {
         this.label = label;
         this.className = className;
         this.aliases = alias;
+        this.desc = desc;
     }
 
     isCommand(command: string): boolean {
@@ -53,9 +70,9 @@ class PureCommand {
     }
 }
 
-export function CommandLabel(label: string, alias: string[] = []) {
+export function CommandLabel(label: string, desc: string, alias: string[] = []) {
     return function (target: Function) {
-        commands.push(new PureCommand(target.name, label, alias));
+        commands.push(new PureCommand(target.name, label, desc, alias));
     }
 }
 

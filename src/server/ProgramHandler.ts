@@ -15,7 +15,7 @@ export class ProgramHandler {
     public startedAt: Date;
 
     constructor(config: ProcessConfig) {
-        this.out = new Logger(config.name, `/${config.name}/at`);
+        this.out = new Logger(config.name, config.name);
         this.out.log(Level.INFO, `--------------- NEW INSTANCE ${config.name.toUpperCase()} ---------------`);
         this.config = config;
         if (config.autoStart) {

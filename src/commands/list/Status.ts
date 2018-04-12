@@ -3,15 +3,21 @@ import {Command} from "../Command";
 import * as stringify  from "../../util/Stringify";
 import {ProgramHandler} from "../../server/ProgramHandler";
 
-@CommandLabel("status", ["st", "stats"])
+@CommandLabel("status", "Show the status of programs, processes, process, pid.",["st", "stats"])
 export class Status extends Command {
 
-    @CommandRouter(/^all$/i, {}, 3)
+    @CommandRouter(/^all$/i, {
+        name: 'status all',
+        description: 'Show globally the status of all processes.'
+    }, 3)
     showAll() {
         this.socket.write(stringify.stringifyProgramsHandlers());
     }
 
-    @CommandRouter(/^(\w+) (\d+)$/i, {}, 2)
+    @CommandRouter(/^(\w+) (\d+)$/i, {
+        name: 'status <name> <num>',
+        description: 'Show the status of the processes that contain $name and the processes number $num.'
+    }, 2)
     showNameWithNumber(name, num) {
         const pe = ProgramHandler.getByNum(name, parseInt(num));
         if (pe)
@@ -20,7 +26,10 @@ export class Status extends Command {
             this.socket.write(`No process with name ${name}_${num}.\n`);
     }
 
-    @CommandRouter(/^(\d+)$/i, {}, 1)
+    @CommandRouter(/^(\d+)$/i, {
+        name: 'status <pid>',
+        description: 'Show the status of the processes with $pid.'
+    }, 1)
     showWithPid(pid) {
         const pe = ProgramHandler.getByPid(parseInt(pid));
         if (pe)
@@ -31,7 +40,10 @@ export class Status extends Command {
         }
     }
 
-    @CommandRouter(/^([a-zA-Z0-9]+)$/i)
+    @CommandRouter(/^([a-zA-Z0-9]+)$/i, {
+        name: 'status <name>',
+        description: 'Show the status of the processes that contain $name.'
+    })
     showWithName(name) {
         const pro = ProgramHandler.getByName(name);
         if (pro)

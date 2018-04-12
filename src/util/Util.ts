@@ -11,10 +11,12 @@ export function getUserHome(): string {
 }
 
 export function mkdirp(targetDir, {isRelativeToScript = false} = {}) {
+    console.log(targetDir);
     const sep = path.sep;
     const initDir = path.isAbsolute(targetDir) ? sep : '';
     const baseDir = isRelativeToScript ? __dirname : '.';
     targetDir.split(sep).reduce((parentDir, childDir) => {
+        console.log(baseDir, parentDir, childDir);
         const curDir = path.resolve(baseDir, parentDir, childDir);
         try {
             fs.mkdirSync(curDir);
@@ -38,10 +40,10 @@ export function humanDuration(seconds: number) {
     let units = ['year', 'day', 'hour', 'minute', 'second'];
     let linked = duration.map(function (el, ind) {
         if (el > 1) {
-            return el.toFixed(1) + ' ' + units[ind] + 's'
+            return el.toFixed(0) + ' ' + units[ind] + 's'
         }
         if (el === 1) {
-            return el.toFixed(1) + ' ' + units[ind]
+            return el.toFixed(0) + ' ' + units[ind]
         }
     }).filter(el => el !== undefined);
     if (linked.length > 1) {

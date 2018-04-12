@@ -5,10 +5,13 @@ import {stringifyConfig, stringifyDiffConfig} from "../../util/Stringify";
 import {ProcessConfig} from "../../server/types/ProcessConfig";
 import {ProgramHandler} from "../../server/ProgramHandler";
 
-@CommandLabel("config", ["cfg", "cf", "conf"])
+@CommandLabel("config", "Reload, show config or difference with the configuration file.", ["cfg", "cf", "conf"])
 export class Config extends Command {
 
-    @CommandRouter(/^reload all$/i, {}, 3)
+    @CommandRouter(/^reload all$/i, {
+        name: "config reload all",
+        description: "Reload all config."
+    }, 3)
     configReloadAll() {
         const treatedConfig = [];
         const treat = (f: Array<ProcessConfig>) => {
@@ -25,7 +28,10 @@ export class Config extends Command {
         treat(app.actualDiskConfig());
     }
 
-    @CommandRouter(/^reload (\w+)$/i, {}, 2)
+    @CommandRouter(/^reload (\w+)$/i, {
+        name: "config reload <name>",
+        description: "Reload config for processes $name."
+    }, 2)
     configReloadName(name) {
         const ph = ProgramHandler.getByName(name);
         const npc = app.actualDiskConfig().find(e => e.name == name);
@@ -45,7 +51,10 @@ export class Config extends Command {
         }
     }
 
-    @CommandRouter(/^diff all$/i, {}, 4)
+    @CommandRouter(/^diff all$/i, {
+        name: "config diff all",
+        description: "Show the difference between the config loaded and the config on the disk."
+    }, 4)
     configDiffAll() {
         const treatedConfig = [];
         const treat = (f: Array<ProcessConfig>, a: Array<ProcessConfig>, inverse: boolean = false) => {
@@ -68,7 +77,10 @@ export class Config extends Command {
         treat(newers, origins, true);
     }
 
-    @CommandRouter(/^diff (\w+)$/i, {}, 3)
+    @CommandRouter(/^diff (\w+)$/i, {
+        name: "config diff <name>",
+        description: "Show the difference between the config loaded and the config on the disk only for the process $name."
+    }, 3)
     configDiffName(name) {
         const pc = app.configs.get(name);
         const npc = app.actualDiskConfig().find(e => e.name == name);
@@ -78,14 +90,20 @@ export class Config extends Command {
         else this.socket.write(`No config found for the name ${name}.\n`);
     }
 
-    @CommandRouter(/^all$/i, {}, 1)
+    @CommandRouter(/^all$/i, {
+        name: "config all",
+        description: "Show all config."
+    }, 1)
     configShowAll() {
         Array.from(app.configs.values()).forEach(e => {
             this.socket.write(stringifyConfig(e));
         });
     }
 
-    @CommandRouter(/^(\w+)$/i)
+    @CommandRouter(/^(\w+)$/i, {
+        name: "config <name>",
+        description: "Show config for processes $name."
+    })
     configShowName(name) {
         const pc = app.configs.get(name);
         if (pc)
@@ -102,8 +120,8 @@ export class Config extends Command {
             .helpCommand("config <name>", "Show config for processes $name.")
             .helpCommand("config all", "Show all config.")
             .helpCommand("config reload <name>", "Reload config for processes $name.")
-            .helpCommand("config reload", "Reload all config.")
-            .helpCommand("config diff", "Show the difference between the config loaded and the config on the disk.")
+            .helpCommand("config reload all", "Reload all config.")
+            .helpCommand("config diff all", "Show the difference between the config loaded and the config on the disk.")
             .helpCommand("config diff <name>", "Show the difference between the config loaded and the config on the disk only for the process $name.")
     }
 }
