@@ -3,7 +3,7 @@
   "version": "0.7.0",
   "license": "MIT",
   "scripts": {
-    "run-dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/index.ts --p=9898 --cfg='/Users/aviscogl/dev/Taskmaster-ts/cfg.json'",
+    "run-dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/index.ts --p=9898 --cfg='/Users/alexis/dev/taskmaster-ts/cfg.json'",
     "type-check": "tsc --noEmit",
     "build": "tsc --emitDeclarationOnly && babel src --out-dir dist --extensions \".ts,.tsx\""
   },

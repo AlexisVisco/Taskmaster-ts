@@ -52,16 +52,7 @@ export class Status extends Command {
             this.socket.write('No processes specified with this name.\n');
     }
 
-    help() {
-        this.helpLine()
-            .helpCommand("status <pid>", "Show the status of the processes with $pid.")
-            .helpCommand("status <name>", "Show the status of the processes that contain $name.")
-            .helpCommand("status <name> <num>", "Show the status of the processes that contain $name and the processes number $num.")
-            .helpCommand("status all", "Show globally the status of all processes.")
-    }
-
     clone() {
         return new Status();
     }
-
 }

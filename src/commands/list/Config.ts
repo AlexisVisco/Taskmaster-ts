@@ -114,14 +114,4 @@ export class Config extends Command {
     clone() {
         return new Config();
     }
-
-    help() {
-        this.helpLine()
-            .helpCommand("config <name>", "Show config for processes $name.")
-            .helpCommand("config all", "Show all config.")
-            .helpCommand("config reload <name>", "Reload config for processes $name.")
-            .helpCommand("config reload all", "Reload all config.")
-            .helpCommand("config diff all", "Show the difference between the config loaded and the config on the disk.")
-            .helpCommand("config diff <name>", "Show the difference between the config loaded and the config on the disk only for the process $name.")
-    }
 }

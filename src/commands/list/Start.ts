@@ -73,13 +73,4 @@ export class Start extends Command {
     clone() {
         return new Start();
     }
-
-    help() {
-        this.helpLine()
-            .helpCommand("start <name>", "Launch processes for the program named $name in the configuration.")
-            .helpCommand("start <name> <number>", "Launch the processes number $number of the program $name.")
-            .helpCommand("start not-launched", "Start all processes that are not launched yet.")
-            .helpCommand("start not-launched <name>", "Start all processes that are not launched yet in program $name.")
-    }
-
 }

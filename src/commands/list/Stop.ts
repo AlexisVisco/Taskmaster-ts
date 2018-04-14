@@ -52,14 +52,6 @@ export class Stop extends Command {
         this.processPid(pe ? pe.pid : undefined);
     }
 
-    help() {
-        super.helpLine()
-            .helpCommand("stop <name>", "Stop all processes in program $name.")
-            .helpCommand("stop all", "Stop all processes actives.")
-            .helpCommand("stop <pid>", "Stop the process with the pid $pid.")
-            .helpCommand("stop <name> <id>", "Stop the process $id in the program $name.")
-    }
-
     clone() {
         return new Stop();
     }

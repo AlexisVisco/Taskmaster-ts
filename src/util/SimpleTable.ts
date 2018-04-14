@@ -1,4 +1,5 @@
 import sprintf from "sprintf-js"
+import {Color} from "./Color";
 
 export class SimpleTable extends Map<String, String> {
 
@@ -13,7 +14,7 @@ export class SimpleTable extends Map<String, String> {
 
     toStr() {
         let str = '';
-        this.forEach((k, v) => str += sprintf.sprintf(`%${this._longestWord}s: %s\n`, v, k));
+        this.forEach((k, v) => str += sprintf.sprintf(`${Color.WHITE_BOLD}%-${this._longestWord}s${Color.RESET}  %s\n`, v, k));
         return str;
     }
 }

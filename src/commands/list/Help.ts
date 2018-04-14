@@ -1,4 +1,4 @@
-import {CommandLabel, getCommandInfo, getCommandList} from "../Commands";
+import {CommandLabel, CommandRouter, getCommandInfo, getCommandList} from "../Commands";
 import {Command} from "../Command";
 import sprintf from "sprintf-js"
 import {Color} from "../../util/Color";
@@ -12,7 +12,7 @@ export class Help extends Command {
         const max = getCommandList().reduce((max, e) => {
             return (e.label.length > max) ? e.label.length : max
         }, 0) + 2;
-        this.socket.write('Usage: taskmaster COMMAND:\n');
+        this.socket.write('Usage: taskmaster COMMAND\n');
         this.socket.write('\nSelf manager of processes !\n\n');
         this.socket.write('Commands:\n');
         getCommandList().forEach(e => this.socket.write(sprintf.sprintf(` \x1b[1m%-${max}s${Color.RESET} %s\n`, `${e.label}`, e.desc)));
@@ -22,9 +22,11 @@ export class Help extends Command {
             const cmdInfos = getCommandInfo().get(e.className);
             if (cmdInfos && cmdInfos.length > 0) {
                 cmdInfos.forEach(x => {
-                    this.socket.write(`   taskmaster ${x.options.name} - ${x.options.description}\n`);
+                    if (x.options.name && x.options.description)
+                        this.socket.write(`   taskmaster ${x.options.name} - ${x.options.description}\n`);
                 })
-            } else this.socket.write('   Only default dommand available.\n')
+            }
+            else this.socket.write('   Only default command available.\n');
             this.socket.write('\n');
         })
     }

@@ -6,8 +6,6 @@ export abstract class Command {
     commandName: string;
     socket: Socket;
 
-    abstract help();
-
     abstract clone();
 
     helpLine(): Command {

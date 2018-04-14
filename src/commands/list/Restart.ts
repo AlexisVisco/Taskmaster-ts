@@ -55,13 +55,4 @@ export class Restart extends Command {
     clone() {
         return new Restart();
     }
-
-    help() {
-        this.helpLine()
-            .helpCommand("restart <name> <num>", "Restart process number $num in program $name.")
-            .helpCommand("restart <name>", "Restart all processes in program $name.")
-            .helpCommand("restart <pid>", "Restart the processes with pid $pid.")
-            .helpCommand("restart all", "Restart all processes of each programs.")
-    }
-
 }

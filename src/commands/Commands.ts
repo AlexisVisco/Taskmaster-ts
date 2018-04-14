@@ -14,6 +14,7 @@ export type CommandInfo = {
 export function callCommand(command: string, socket: Socket) {
     command = command.replace('\n', '');
     const pureCommand = commands.find(e => e.isCommand(command));
+
     if (pureCommand) {
         let ref: Command = undefined;
         let list = commandsInfo.get(pureCommand.className);
@@ -31,8 +32,9 @@ export function callCommand(command: string, socket: Socket) {
                     return;
                 }
             }
-            if (ref)
-                ref.help();
+            if (ref) {
+                generateHelp(ref, list);
+            }
         }
         else {
             const {Help} = require(`./list/Help`);
@@ -91,4 +93,12 @@ export function CommandRouter(regex: RegExp, options: CommandDesc = {},
         });
         return descriptor;
     };
+}
+
+function generateHelp(ref: Command, list: CommandInfo[]) {
+    ref.helpLine();
+    list.forEach(e => {
+        if (e.options.name && e.options.description)
+            ref.helpCommand(e.options.name, e.options.description);
+    });
 }
