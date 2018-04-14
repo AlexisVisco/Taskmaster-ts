@@ -1,6 +1,6 @@
 import {CommandLabel, CommandRouter} from "../Commands";
 import {Command} from "../Command";
-import {ProgramHandler} from "../../server/ProgramHandler";
+import {ProgramHandler} from "../../ProgramHandler";
 
 @CommandLabel("restart", "Restart programs, program, processes, process, pid.", ["relaunch", "reexecute"])
 export class Restart extends Command {

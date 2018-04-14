@@ -8,12 +8,12 @@ import * as fs from "fs";
 import {SocketHandler} from "./server/Sockethandler";
 import {Level, Logger} from "./util/Logger";
 import {ProgramHandler} from "./server/ProgramHandler";
-import {Status} from "./commands/list/Status";
-import {Stop} from "./commands/list/Stop";
-import {Restart} from "./commands/list/Restart";
-import {Start} from "./commands/list/Start";
-import {Config} from "./commands/list/Config";
-import {Help} from "./commands/list/Help";
+import {Status} from "./server/commands/list/Status";
+import {Stop} from "./server/commands/list/Stop";
+import {Restart} from "./server/commands/list/Restart";
+import {Start} from "./server/commands/list/Start";
+import {Config} from "./server/commands/list/Config";
+import {Help} from "./server/commands/list/Help";
 
 type Options = { port?: number, config: string, generate?: string, help?: string }
 
@@ -36,6 +36,7 @@ export class Application {
     }
 
     public main() {
+        console.log(`PID: ${process.pid}`);
         if (this.options.generate)
             this.generateConfigAt();
         else if (this.options.help)
@@ -59,7 +60,6 @@ export class Application {
 
     private launchPrograms() {
         global.log(Level.INFO, 'Retrieving configuration');
-        console.log(this.options.config);
         if (fs.existsSync(this.options.config)) {
             const arrayProcessConfig : Array<ProcessConfig> = this.actualDiskConfig();
             for (let processConfig of arrayProcessConfig) {
@@ -101,6 +101,12 @@ export class Application {
         return new Application(options);
     }
 }
+
+process.on('SIGHUP', () => {
+    const c = new Config();
+    c.socket = { write: (m: string) => console.log(`FROM SIGNAL: ${m}`) };
+    c.configReloadAll();
+});
 
 const app: Application = Application.instance();
 app.main();

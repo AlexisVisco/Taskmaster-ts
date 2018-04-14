@@ -1,6 +1,6 @@
 import {Command} from "../Command";
 import {CommandLabel, CommandRouter} from "../Commands";
-import {ProgramHandler} from "../../server/ProgramHandler";
+import {ProgramHandler} from "../../ProgramHandler";
 
 @CommandLabel("start", "Start programs, program, processes, process.",["start", "go"])
 export class Start extends Command {

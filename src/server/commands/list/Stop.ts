@@ -1,6 +1,6 @@
 import {Command} from "../Command";
 import {CommandLabel, CommandRouter} from "../Commands";
-import {ProgramHandler} from "../../server/ProgramHandler";
+import {ProgramHandler} from "../../ProgramHandler";
 
 @CommandLabel("stop", "Stop programs, processes, process, pid", ["kill"])
 export class Stop extends Command {

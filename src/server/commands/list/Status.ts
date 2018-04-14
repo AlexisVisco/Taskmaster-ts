@@ -1,7 +1,7 @@
 import {CommandLabel, CommandRouter} from "../Commands";
 import {Command} from "../Command";
-import * as stringify  from "../../util/Stringify";
-import {ProgramHandler} from "../../server/ProgramHandler";
+import * as stringify  from "../../../util/Stringify";
+import {ProgramHandler} from "../../ProgramHandler";
 
 @CommandLabel("status", "Show the status of programs, processes, process, pid.",["st", "stats"])
 export class Status extends Command {

@@ -1,6 +1,6 @@
 import net, {Socket} from "net";
 import {randId} from "../util/Util";
-import {callCommand} from "../commands/Commands";
+import {callCommand} from "./commands/Commands";
 
 export class SocketHandler {
     port: number;

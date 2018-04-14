@@ -1,5 +1,5 @@
 import {Command} from "./Command";
-import {capitalize} from "../util/Util";
+import {capitalize} from "../../util/Util";
 import {Socket} from "net";
 
 const commands: Array<PureCommand> = [];

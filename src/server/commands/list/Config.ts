@@ -1,9 +1,9 @@
 import {Command} from "../Command";
 import {CommandLabel, CommandRouter} from "../Commands";
-import {app} from "../../index";
-import {stringifyConfig, stringifyDiffConfig} from "../../util/Stringify";
-import {ProcessConfig} from "../../server/types/ProcessConfig";
-import {ProgramHandler} from "../../server/ProgramHandler";
+import {app} from "../../../index";
+import {stringifyConfig, stringifyDiffConfig} from "../../../util/Stringify";
+import {ProcessConfig} from "../../types/ProcessConfig";
+import {ProgramHandler} from "../../ProgramHandler";
 
 @CommandLabel("config", "Reload, show config or difference with the configuration file.", ["cfg", "cf", "conf"])
 export class Config extends Command {

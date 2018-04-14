@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import {dateFormat, getUserHome} from "./Util";
 import {WriteStream} from "fs";
+import {log} from "util";
 
 const TASKMASTER_DIRECTORY = getUserHome() + "/.taskmaster";
 

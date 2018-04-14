@@ -1,7 +1,7 @@
 import {CommandLabel, CommandRouter, getCommandInfo, getCommandList} from "../Commands";
 import {Command} from "../Command";
 import sprintf from "sprintf-js"
-import {Color} from "../../util/Color";
+import {Color} from "../../../util/Color";
 
 @CommandLabel("help", "Show help of taskmaster.", ["h"])
 export class Help extends Command {

@@ -83,7 +83,13 @@ export class ProcessEntity {
         if (this.isAlive) {
             this._status = ProcessStatus.TERMINATING;
             this.needToBeRestarted = false;
-            this.process.kill(this.parent.config.stopSignal);
+            exec(`kill -${this.parent.config.stopSignal} ${this.process.pid}`);
+            setTimeout(() => {
+                if (this.isAlive) {
+                    this.parent.out.log(Level.ERROR, `Fail to kill process ${this.currentName}, need to be killed forcibly.`);
+                    this.process.kill();
+                }
+            }, 1000 * this.parent.config.stopTimeSuccessful)
         }
     }
 
