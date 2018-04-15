@@ -24,15 +24,6 @@ export class ProgramHandler {
         ProgramHandler.programs.push(this);
     }
 
-    public killProcess(num: number) : boolean {
-        const pro = this.processes.get(num);
-        if (pro) {
-            pro.stop();
-            return true;
-        }
-        return false;
-    }
-
     public killAllProcesses() : boolean {
         if (this.started) {
             this.started = false;
@@ -54,32 +45,6 @@ export class ProgramHandler {
             return true;
         }
         return false;
-    }
-
-    public updateConfig(pc: ProcessConfig) {
-        this.out.log(Level.INFO, `Reloading config`);
-        const numProcess = pc.numProcess;
-        const oldProc = this.config.numProcess;
-        console.log(this.started, numProcess, oldProc);
-        if (this.started) {
-            if (numProcess > oldProc) {
-                for (let i = oldProc; i < numProcess; i++) {
-                    const pe = new ProcessEntity(this, i);
-                    this.processes.set(i, pe);
-                    this.out.log(Level.INFO, `Adding process ${i} cause reload.`);
-                    pe.run();
-                }
-            }
-            else if (oldProc > numProcess) {
-                for (let i = oldProc - 1; i > numProcess - 1; i--) {
-                    this.out.log(Level.INFO, `Removing process ${i} cause reload.`);
-                    const pe = this.processes.get(i);
-                    if (pe) pe.stop();
-                    this.processes.delete(i);
-                }
-            }
-        }
-        this.config = pc;
     }
 
     public destroy() {
@@ -132,5 +97,41 @@ export class ProgramHandler {
         const prog = ProgramHandler.programs.find(e => e.config.name == name);
         if (prog) return prog;
         return undefined;
+    }
+
+    public updateConfig(pc: ProcessConfig) {
+        const oldPc = this.config;
+        this.config = pc;
+        this.out.log(Level.INFO, `Reloading config`);
+        if (this.started) {
+            if (oldPc.cmd == pc.cmd) {
+                if (pc.numProcess > oldPc.numProcess)
+                    this.constructNewProcess(oldPc.numProcess, pc.numProcess);
+                else if (oldPc.numProcess > pc.numProcess)
+                    this.removeOldProcesseses(oldPc.numProcess, pc.numProcess);
+            }
+            else {
+                this.out.log(Level.INFO, `Restarting all processes cause command is now different.`);
+                Array.from(this.processes.values()).forEach(e => e.restart())
+            }
+        }
+    }
+
+    private removeOldProcesseses(oldProc: number, numProcess: number) {
+        for (let i = oldProc - 1; i > numProcess - 1; i--) {
+            this.out.log(Level.INFO, `Removing process ${i} cause reload.`);
+            const pe = this.processes.get(i);
+            if (pe) pe.stop();
+            this.processes.delete(i);
+        }
+    }
+
+    private constructNewProcess(oldProc: number, numProcess: number) {
+        for (let i = oldProc; i < numProcess; i++) {
+            const pe = new ProcessEntity(this, i);
+            this.processes.set(i, pe);
+            this.out.log(Level.INFO, `Adding process ${i} cause reload.`);
+            pe.run();
+        }
     }
 }

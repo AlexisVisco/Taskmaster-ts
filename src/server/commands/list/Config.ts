@@ -2,7 +2,7 @@ import {Command} from "../Command";
 import {CommandLabel, CommandRouter} from "../Commands";
 import {app} from "../../../index";
 import {stringifyConfig, stringifyDiffConfig} from "../../../util/Stringify";
-import {ProcessConfig} from "../../types/ProcessConfig";
+import {isValidconfigProcess, maskDefault, ProcessConfig} from "../../types/ProcessConfig";
 import {ProgramHandler} from "../../ProgramHandler";
 
 @CommandLabel("config", "Reload, show config or difference with the configuration file.", ["cfg", "cf", "conf"])
@@ -33,8 +33,13 @@ export class Config extends Command {
         description: "Reload config for processes $name."
     }, 2)
     configReloadName(name) {
+        const conf = app.actualDiskConfig();
+        if (!isValidconfigProcess(conf)) {
+            this.socket.write(`Config is invalid.\n`);
+            return ;
+        }
         const ph = ProgramHandler.getByName(name);
-        const npc = app.actualDiskConfig().find(e => e.name == name);
+        const npc = maskDefault(app.actualDiskConfig().find(e => e.name == name));
 
         if (!ph && !npc) this.socket.write(`No new config or old config found ${name}.\n`);
         else if (!ph && npc) {

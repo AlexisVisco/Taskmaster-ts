@@ -2,10 +2,10 @@ import {ChildProcess} from "child_process";
 import {ProgramHandler} from "./ProgramHandler";
 import {ProcessStatus} from "./types/ProcessStatus";
 import {Level} from "../util/Logger";
-import {exec} from "child_process";
+import {spawn, exec} from "child_process";
 import * as fs from "fs";
 import {WriteStream} from "fs";
-import {dateFormat, diffBetweenDates} from "../util/Util";
+import {diffBetweenDates} from "../util/Util";
 import {RestartCondition} from "./types/RestartCondition";
 import {ProcessConfig} from "./types/ProcessConfig";
 
@@ -36,8 +36,6 @@ export class ProcessEntity {
         const opt: any = {};
         if (c.workingDirectory) opt.cwd = c.workingDirectory;
         if (c.environment) opt.env = c.environment;
-        if (c.stopSignal) opt.killSignal = c.stopSignal;
-        opt.maxBuffer =  1000 * 1000 * 1000;
         return opt;
     }
 
@@ -51,7 +49,8 @@ export class ProcessEntity {
             process.umask(parseInt(c.umask, 8));
         this.timeAtLaunch = new Date();
         this._status = ProcessStatus.LAUNCHING;
-        this.process = exec(c.cmd, this.buildOption());
+
+        this.process = spawn(this.dataCommand.cmd, this.dataCommand.args, this.buildOption());
         this.atExit();
         this.redirectProcess();
         process.umask(currentUmask);
@@ -85,7 +84,7 @@ export class ProcessEntity {
             this.needToBeRestarted = false;
             exec(`kill -${this.parent.config.stopSignal} ${this.process.pid}`);
             setTimeout(() => {
-                if (this.isAlive) {
+                if (this.needToBeRestarted == false && this._status != ProcessStatus.TERMINATING) {
                     this.parent.out.log(Level.ERROR, `Fail to kill process ${this.currentName}, need to be killed forcibly.`);
                     this.process.kill();
                 }
@@ -102,6 +101,7 @@ export class ProcessEntity {
         if (c.stdout) {
             this.wsOut = fs.createWriteStream(c.stdout + this.id, {encoding: 'utf8'});
             this.process.stdout.pipe(this.wsOut);
+            this.process.killed
         }
     }
 
@@ -157,12 +157,16 @@ export class ProcessEntity {
 
     get currentName() : string { return `${this.parentName}_${this.id}` }
 
-    get stringDuration() : string { return dateFormat(this.timeAtLaunch, "%d/%m %H:%M:%S", false) }
-
     get amountRestartBecauseFail() : number { return this.startRetries }
 
     get pid() : number { return this.process.pid }
 
     get config() : ProcessConfig { return this.parent.config }
+
+    get dataCommand() {
+        const c = this.parent.config.cmd.split(' ');
+        let args = [];
+        return {cmd: c[0], args: c.length > 1 ? c.slice(1) : args};
+    }
 
 }
